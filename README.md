@@ -24,7 +24,7 @@ To visualize your own data, you need to replace `attn_wts.json` with a similar f
     Note attention length must be <= length of `article_lst`.
     e.g. your article may have 500 words but you only fed the first 200 words into the model, thus attention length is 200.
     In this case the visualizer will mark the truncation point in the article.
-*  `gen_probs`: a list same length as decoded_lst, containing probabilities.
+*  `gen_probs`: a list same length as `decoded_lst`, containing probabilities.
 
 
 WARNING: Make sure that none of the strings in `article_lst`, `decoded_lst`, or `abstract_str` contain `<angled brackets>`. These will interfere with the HTML and can result in text not being displayed.
