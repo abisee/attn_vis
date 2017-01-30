@@ -1,4 +1,4 @@
-# ATTENTION VISUALIZER 
+# Attention Visualizer
 By Abigail See, abisee@stanford.edu
 
 This is a tool to visualize the distribution of attention in a text-based sequence-to-sequence task such as summarization. As you hover your mouse over the decoded words, the tool shows a heatmap of attention over the source words. 
