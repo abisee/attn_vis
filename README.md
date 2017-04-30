@@ -2,7 +2,7 @@
 
 This is a tool to visualize the distribution of attention in a text-based sequence-to-sequence task such as summarization. As you hover your mouse over the decoded words, the tool shows a heatmap of attention over the source words. A demo can be seen [here](http://www.abigailsee.com/2017/04/16/taming-rnns-for-better-summarization.html) (scroll down to "Example Output" section).
 
-Additionally, for pointer-generator networks such as that described in [this paper](https://arxiv.org/abs/1704.04368), the tool displays the _generation probability_ of each decoded word.
+Additionally, for pointer-generator networks such as that described in [this paper](https://arxiv.org/abs/1704.04368), the tool displays the _generation probability_ of each decoded word. This tool was designed to work with the [Tensorflow code](https://github.com/abisee/pointer-generator) for the paper.
 
 ## To run
 
@@ -14,7 +14,7 @@ from this directory then navigate to `http://localhost:8000/` in browser. The vi
 
 ## To use your own data
 
-To visualize your own data, you need to replace `attn_vis_data.json` with a similar file containing your own data. In particular `attn_vis_data.json` should contain the following fields:
+To visualize your own data, you need to replace `attn_vis_data.json` with a similar file, either produced by this [Tensorflow code](https://github.com/abisee/pointer-generator), or by your own model. In particular `attn_vis_data.json` should contain the following fields:
 
 *  `article_lst`: the article (or source text) as a list of words
 *  `decoded_lst`: the decoded (i.e. machine-generated) summary as a list of words
