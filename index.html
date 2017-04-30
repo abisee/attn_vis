@@ -31,7 +31,10 @@ and available here:
   </style>
   <script>
 
-  json_fname = "attn_wts.json" // file containing the text and the weights
+  json_fname = "attn_vis_data.json" // file containing the text and the weights
+
+  greenhue = 151
+  yellowhue = 56
 
   function round(x, dp) {
     // round a float to dp decimal places
@@ -46,7 +49,7 @@ and available here:
     }
     var saturation = 100 // saturation percentage
     p = 1-p // invert so p=0 is light and p=1 is dark
-    var min_lightness = 40 // minimum percentage lightness, i.e. darkest possible color
+    var min_lightness = 50 // minimum percentage lightness, i.e. darkest possible color
     var lightness = (min_lightness + p*(100-min_lightness)) // lightness is proportional to p
     return sprintf('hsl(%d,%s%%,%s%%)', hue, saturation, lightness)
   }
@@ -55,8 +58,8 @@ and available here:
     // render the article. if dec_idx and dec_word are not null, we highlight the article with the attention distribution for decoder timestep dec_idx and corresponding decoder word dec_word
     var startix = 0;
     var endix = data.article_lst.length
-    var attn_len = data.attn_wts[0].length
-    var dec_len = data.attn_wts.length
+    var attn_len = data.attn_dists[0].length
+    var dec_len = data.attn_dists.length
 
     div.html(''); // flush
     for(var i=startix; i<endix; i++) {
@@ -64,9 +67,9 @@ and available here:
       if (dec_idx == null) {
         var attn_wt = 0;
       } else {
-        var attn_wt = data.attn_wts[dec_idx][i];
+        var attn_wt = data.attn_dists[dec_idx][i];
       }
-      var background_color = toColor(attn_wt, 200); // 200 is blue
+      var background_color = toColor(attn_wt, yellowhue);
       var css = 'background-color:' + background_color;
       css += ';display:inline'
       var word_html = word + ' '
@@ -97,29 +100,37 @@ and available here:
     div.html(''); // flush
     for(var i=startix; i<endix; i++) {
       var word = data.decoded_lst[i]; // a string
-      var gen_prob = data.gen_probs[i];
-      var background_color = toColor(gen_prob, 300); // 300 is pink
-      var css = 'background-color:' + background_color;
-      css += ';display:inline'
+      css = 'display:inline;'
+      if (data.hasOwnProperty('p_gens')) {
+        var p_gen = data.p_gens[i];
+        var background_color = toColor(p_gen, greenhue);
+        css += 'background-color:' + background_color;
+      } else {
+        var p_gen = null;
+      }
       var dnew = div.append('div');
 
       dnew.html(word+' ') // this is the content
         .attr('class', 'd')
         .attr('style', css) // apply this style
         // add interactivity for mouseover decoder words
-        .on('mouseover', getHandleMouseOver(i, word, gen_prob))
+        .on('mouseover', getHandleMouseOver(i, word, p_gen))
         .on('mousemove', handleMouseMove)
         .on('mouseout', handleMouseOut)
     }
   }
 
-  function getHandleMouseOver(dec_idx, dec_word, gen_prob) {
+  function getHandleMouseOver(dec_idx, dec_word, p_gen) {
      // When you mouseover a decoder word, shows attention distribution on article
+     // p_gen is null for non-pointer models
     return function() {
       // Renders the article with the appropriate highlighting
       render_art(d3.select('#art'), gdata, dec_idx, dec_word);
-      gtooltip.text(round(gen_prob, 3))
-      return gtooltip.style("visibility", "visible");
+      // Show a tooltip giving value of p_gen
+      if (p_gen != null) {
+        gtooltip.text(round(p_gen, 3))
+        return gtooltip.style("visibility", "visible");
+      }
     }
   }
 
@@ -195,9 +206,9 @@ and available here:
       <div id="abs">
         reference summary goes here
       </div>
-      <h2>Decoded (highlighted = high generation probability)</h2>
+      <h2>Generated summary (highlighted = high generation probability)</h2>
       <div id="dec">
-        decoded goes here
+        generated summary goes here
       </div>
     </div>
   </body>
